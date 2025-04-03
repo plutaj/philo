@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jozefpluta <jozefpluta@student.42.fr>      +#+  +:+       +#+        */
+/*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:59:17 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/03/22 15:49:01 by jozefpluta       ###   ########.fr       */
+/*   Updated: 2025/04/03 16:43:31 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,3 +39,4 @@ int ft_atoi(const char *str)
 	}
 	return (num * sign);
 }
+
