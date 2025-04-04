@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/04 19:50:41 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/04 20:35:16 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ void    alloc_init_table(t_table *table, char **argv);
 void    create_philos(t_table *table);
 void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n);
 void    edge_cases(int argc, char **argv);
+void	init_monitoring(t_table *table);
+void	*monitoring_f(void *arg);
+int		have_all_eaten(t_table *table);
 
 /*  error.c functions  */
 void    error_msg();

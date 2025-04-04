@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/04 20:26:49 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/04 20:30:15 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	*monitoring_f(void *arg)
 			if (table->philo->last_meal_time > table->time_to_die)
 			{
 				write (1, "\nPhilo", 6); /*later needed to destroy threads*/
-				write (1, table->philo->id, 1);
+				write (1, table->philo->id, 1); /*vyhandlovat string do write nie int*/
 				write (1, "died of starvation\n", 18);
 				exit(0);
 			}
