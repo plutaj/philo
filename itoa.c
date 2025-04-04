@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 16:46:12 by jpluta            #+#    #+#             */
-/*   Updated: 2025/04/03 16:47:14 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/04 18:18:05 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*ft_itoa(int n)
 	return (res);
 }
 
-static int	int_len(long n)
+int	int_len(long n)
 {
 	int	len;
 
@@ -59,7 +59,7 @@ static int	int_len(long n)
 	return (len);
 }
 
-static char	*before_alloc(int n)
+char	*before_alloc(int n)
 {
 	char	*temp;
 

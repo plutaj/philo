@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/03 16:57:41 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/04 20:26:49 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,67 @@ int main(int argc, char **argv)
 {
     t_table *table;
 
+	table = NULL;
     edge_cases(argc, argv);
     alloc_init_table(table, argv);
-    alloc_create_philos(table);
+    create_philos(table);
+	init_monitoring(table);
     return (0);
+}
+
+void	init_monitoring(t_table *table)
+{
+    pthread_t	monitoring;
+	
+	table->monitoring = &monitoring;
+	pthread_create(&monitoring, NULL, monitoring_f, (void *)table); // add 3rd param
+}
+
+void	*monitoring_f(void *arg)
+{
+	t_philo	*head;
+	t_table	*table = (t_table *)arg;
+
+	head = table->philo;
+	while (1)
+	{
+		while (table->philo)
+		{
+			if (table->philo->last_meal_time > table->time_to_die)
+			{
+				write (1, "\nPhilo", 6); /*later needed to destroy threads*/
+				write (1, table->philo->id, 1);
+				write (1, "died of starvation\n", 18);
+				exit(0);
+			}
+			table->philo = table->philo->next;
+		}
+		table->philo = head;
+		if (have_all_eaten(table))
+		{
+			write (1, "Program succsessfully finished\n", 31);
+			exit(0);
+		}
+		usleep(1000);
+	}
+}
+
+int	have_all_eaten(t_table *table)
+{
+	t_philo	*head;
+
+	head = table->philo;
+	while (table->philo)
+	{
+		if (table->philo->times_eaten < table->number_of_times_each_phil_must_eat)
+		{
+			table->philo = head;
+			return (0);
+		}
+		table->philo = table->philo->next;
+	}
+	table->philo = head;
+	return (1);
 }
 
 void    alloc_init_table(t_table *table, char **argv)
@@ -55,28 +112,8 @@ void    create_philos(t_table *table)
 	t_philo	*head;
 
 	new_philo = NULL;
+	head = NULL;
 	alloc_philos(table, new_philo, head, n);
-}
-
-void	check_starvation(t_table *table)
-{
-	/* TU SOM SKONCIL PRACU V TEJTO FUNKII POKRACOVAT*/
-	int		i;
-	char	*philo_id;
-
-	i = 0;
-	while (i < table->num_of_philo)
-	{
-		if (table->philo->last_meal_time > table->time_to_die)
-		{
-			philo_id = ft_itoa(table->philo->id);
-			write(1, "\nPhilosopher number ", 20);
-			write(1, philo_id, 1);
-			write(1, "died of starvation", 18);
-			exit(0);
-		}
-		table->philo = table->philo->next;
-	}
 }
 
 void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
@@ -115,16 +152,17 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 void    edge_cases(int argc, char **argv)
 {
     int num_of_philo;
-	int	is_digit;
 	int	i;
 
-    num_of_philo = atoi(argv[1]);
 	i = 2;
-    if (argc != 5)
+    if (argc != 6)
     {
         printf("Error [Wrong number of arguments]\n");
         exit(0);
     }
+	if (!is_num(argv[1]))
+		ft_error2();
+    num_of_philo = ft_atoi(argv[1]);
     if (num_of_philo < 1)
     {
         printf("Error [Wrong number of philosophers]\n");
@@ -132,9 +170,10 @@ void    edge_cases(int argc, char **argv)
     }
 	while (i <= 5)
 	{
-		is_digit(is_digit);
-
-		if ()
+		if (0 > ft_atoi(argv[i]))
+			ft_error2();
+		if (!(is_num(argv[i])))
+			error_msg();
 		i++;
 	}
 }

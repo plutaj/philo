@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:59:17 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/03 16:43:31 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/04 19:30:08 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ int ft_atoi(const char *str)
 	sign = 1;
 	p_str = str;
     while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
-            || str[i] == '\r' || str[i] == '\v')
+			|| str[i] == '\r' || str[i] == '\v')
+	{
         i++;
+	}
 	if (p_str[i] == '+' || p_str[i] == '-')
 	{
         if (p_str[i] == '-')
@@ -40,3 +42,24 @@ int ft_atoi(const char *str)
 	return (num * sign);
 }
 
+int	is_num(char *num)
+{
+	while (num)
+	{
+		if (!is_digit(*num))
+			return (1);
+		num++;
+	}
+	return (0);
+}
+
+int	is_digit(char c)
+{
+	int	n;
+
+	n = ft_atoi(&c);
+	if (n >= 48 && n <= 57)
+		return (1);
+	else
+		return (0);
+}

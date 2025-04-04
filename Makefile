@@ -6,14 +6,14 @@
 #    By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 17:56:03 by jpluta            #+#    #+#              #
-#    Updated: 2025/04/03 16:13:11 by jpluta           ###   ########.fr        #
+#    Updated: 2025/04/04 18:11:59 by jpluta           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 CFLAGS = -Wall -g
 
-SRC = main.c utils.c error.c
+SRC = philo.c utils.c error.c itoa.c
 OBJ = $(SRC:.c=.o)
 EXEC = philo
 
