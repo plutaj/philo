@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:59:17 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/04 19:30:08 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/05 14:38:12 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,14 @@ int	is_digit(char c)
 		return (1);
 	else
 		return (0);
+}
+
+int	ft_strlen(const char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
+		i++;
+	return (i);
 }

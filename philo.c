@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/04 20:30:15 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/05 16:42:13 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,59 @@
 
 int main(int argc, char **argv)
 {
-    t_table *table;
+    t_table table;
 
-	table = NULL;
+	// table = NULL;
     edge_cases(argc, argv);
-    alloc_init_table(table, argv);
-    create_philos(table);
-	init_monitoring(table);
+    alloc_init_table(&table, argv);
+    create_philos(&table);
+	join_forks(&table);
+	init_monitoring(&table);
+	// potentional usleep
+	dining_philosophers(&table);
     return (0);
+}
+
+int start_timer()
+{
+    struct timeval start_time, current_time
+}
+
+void	dining_philosophers(t_table *table)
+{
+	t_philo	*head;
+	t_philo *current_philo;
+
+	head = table->philo;
+	current_philo = table->philo;
+	while (1)
+	{
+		if (current_philo)
+		{
+			pthread_mutex_lock(&current_philo->left_fork);
+			pthread_mutex_lock(&current_philo->right_fork);
+			write(1, Philo);
+		}
+		if (current_philo->next)
+		{
+			
+		}
+	}
+}
+
+void	join_forks(t_table *table)
+{
+	int	i;
+	t_philo	*current;
+
+	i = 0;
+	current = table->philo;
+	while (table->num_of_philo > i)
+	{
+		current->left_fork = table->forks[i];
+		current->right_fork = table->forks[(i + 1) % table->num_of_philo];
+		i++;
+	}
 }
 
 void	init_monitoring(t_table *table)
@@ -36,6 +81,7 @@ void	*monitoring_f(void *arg)
 {
 	t_philo	*head;
 	t_table	*table = (t_table *)arg;
+	char	*id_str;
 
 	head = table->philo;
 	while (1)
@@ -45,7 +91,8 @@ void	*monitoring_f(void *arg)
 			if (table->philo->last_meal_time > table->time_to_die)
 			{
 				write (1, "\nPhilo", 6); /*later needed to destroy threads*/
-				write (1, table->philo->id, 1); /*vyhandlovat string do write nie int*/
+				id_str = ft_itoa(table->philo->id);
+    			write(1, id_str, ft_strlen(id_str)); /*vyhandlovat string do write nie int*/
 				write (1, "died of starvation\n", 18);
 				exit(0);
 			}
@@ -57,6 +104,7 @@ void	*monitoring_f(void *arg)
 			write (1, "Program succsessfully finished\n", 31);
 			exit(0);
 		}
+		
 		usleep(1000);
 	}
 }
