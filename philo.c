@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/05 16:42:13 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/06 17:03:35 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,34 +22,56 @@ int main(int argc, char **argv)
     create_philos(&table);
 	join_forks(&table);
 	init_monitoring(&table);
-	// potentional usleep
-	dining_philosophers(&table);
+	usleep(1000); // waiting till all phillos created
+	threads_create_f(&table);
     return (0);
 }
 
-int start_timer()
+long start_timer(int i)
 {
-    struct timeval start_time, current_time
+	long	seconds;
+	long	microseconds;
+	
+	if (i == 0)
+	{
+    	gettimeofday(&start_time, NULL);
+		return (0);
+	}
+	gettimeofday(&end_time, NULL);
+	seconds = end_time.tv_sec - start_time.tv_sec;
+    microseconds = end_time.tv_usec - start_time.tv_usec;
+    
+    // Convert the time difference to milliseconds
+    long elapsed_time = seconds * 1000 + microseconds / 1000;
+	return (elapsed_time);
 }
 
-void	dining_philosophers(t_table *table)
+void	threads_create_f(t_table *table)
 {
-	t_philo	*head;
-	t_philo *current_philo;
+	t_philo *head;
 
 	head = table->philo;
-	current_philo = table->philo;
+	while (head)
+	{
+		pthread_create(head->thread, NULL, dining_philosophers, head);
+		head = head->next;
+	}
+}
+
+void	dining_philosophers(void *arg)
+{
+	t_philo *philo;
+	
+	philo = (t_philo *)arg;
+	if (start_timer(0) == 0)
+			printf("Timer started\n");
 	while (1)
 	{
-		if (current_philo)
+		if ((philo->id % 2) == 0)
 		{
-			pthread_mutex_lock(&current_philo->left_fork);
-			pthread_mutex_lock(&current_philo->right_fork);
-			write(1, Philo);
-		}
-		if (current_philo->next)
-		{
-			
+			if (pthread_mutex_lock(&philo->left_fork) == 00);
+				pthread_mutex_lock(&philo->right_fork);
+			usleep();
 		}
 	}
 }
@@ -104,7 +126,6 @@ void	*monitoring_f(void *arg)
 			write (1, "Program succsessfully finished\n", 31);
 			exit(0);
 		}
-		
 		usleep(1000);
 	}
 }
@@ -173,7 +194,6 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 			error_msg();
 		head = new_philo;
 		new_philo->id = n;
-		pthread_create(&new_philo->thread, NULL, NULL, &new_philo->id); // add 3rd param
 		new_philo->last_meal_time = 0;
 		new_philo->times_eaten = 0;
 		new_philo->next = NULL;
@@ -188,7 +208,6 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 		new_philo->id = n;
 		new_philo->last_meal_time = 0;
 		new_philo->times_eaten = 0;
-		pthread_create(&new_philo->thread, NULL, NULL, &new_philo->id); // add 3rd param
 		table->philo->next = new_philo;
 		table->philo = table->philo->next;
 		table->philo->next = NULL;
