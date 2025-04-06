@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jozefpluta <jozefpluta@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/06 17:03:35 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/06 19:25:18 by jozefpluta       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,34 @@ void	dining_philosophers(void *arg)
 	{
 		if ((philo->id % 2) == 0)
 		{
-			if (pthread_mutex_lock(&philo->left_fork) == 00);
+			if (pthread_mutex_lock(&philo->left_fork) == 0)
 				pthread_mutex_lock(&philo->right_fork);
-			usleep();
+			printf("%ld %d has taken a fork\n", start_timer(1), philo->id);
+			printf("%ld %d is eating\n", start_timer(1), philo->id);
+			usleep(philo->table->time_to_eat);
+			philo->times_eaten += 1;
+			philo->last_meal_time = start_timer(1); // posefit toto
+			pthread_mutex_unlock(&philo->left_fork);
+			pthread_mutex_unlock(&philo->right_fork);
+			printf("%ld %d is sleeping\n", start_timer(1), philo->id);
+			usleep(philo->table->time_to_sleep);
+			printf("%ld %d is thinking\n", start_timer(1), philo->id);
+			usleep(philo->table->time_to_eat - philo->table->time_to_sleep);
 		}
+		else
+		{
+			printf("%ld %d is sleeping\n", start_timer(1), philo->id);
+			usleep(philo->table->time_to_sleep);
+			printf("%ld %d is thinking\n", start_timer(1), philo->id);
+			usleep(philo->table->time_to_eat - philo->table->time_to_sleep);
+			if (pthread_mutex_lock(&philo->right_fork) == 0)
+				pthread_mutex_lock(&philo->left_fork);
+			printf("%ld %d has taken a fork\n", start_timer(1), philo->id);
+			printf("%ld %d is eating\n", start_timer(1), philo->id);
+			usleep(philo->table->time_to_eat);
+			pthread_mutex_unlock(&philo->left_fork);
+			pthread_mutex_unlock(&philo->right_fork);
+		}	
 	}
 }
 
@@ -110,7 +134,7 @@ void	*monitoring_f(void *arg)
 	{
 		while (table->philo)
 		{
-			if (table->philo->last_meal_time > table->time_to_die)
+			if ((table->philo->last_meal_time - start_timer(1)) > table->time_to_die)
 			{
 				write (1, "\nPhilo", 6); /*later needed to destroy threads*/
 				id_str = ft_itoa(table->philo->id);
@@ -197,6 +221,7 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 		new_philo->last_meal_time = 0;
 		new_philo->times_eaten = 0;
 		new_philo->next = NULL;
+		new_philo->table = table;
 		table->philo = new_philo;
 		n++;
 	}
@@ -208,6 +233,7 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 		new_philo->id = n;
 		new_philo->last_meal_time = 0;
 		new_philo->times_eaten = 0;
+		new_philo->table = table;
 		table->philo->next = new_philo;
 		table->philo = table->philo->next;
 		table->philo->next = NULL;
