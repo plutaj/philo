@@ -6,15 +6,27 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 16:01:37 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/04 18:15:24 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/07 18:28:30 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void    error_msg()
+void    error_msg_1()
 {
-    printf("Error [philo malloc failed]\n");
+    printf("Error1 [philo malloc failed]\n");
+    exit(1);
+}
+
+void    error_msg_2()
+{
+    printf("Error2 [philo malloc failed]\n");
+    exit(1);
+}
+
+void    error_msg_3()
+{
+    printf("Error3 [philo malloc failed]\n");
     exit(1);
 }
 

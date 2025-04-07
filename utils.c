@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:59:17 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/05 14:38:12 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/07 18:47:04 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,24 +44,21 @@ int ft_atoi(const char *str)
 
 int	is_num(char *num)
 {
-	while (num)
+	while (*num)
 	{
 		if (!is_digit(*num))
-			return (1);
+			return (0);
 		num++;
 	}
-	return (0);
+	return (1);
 }
 
-int	is_digit(char c)
+int is_digit(char c)
 {
-	int	n;
-
-	n = ft_atoi(&c);
-	if (n >= 48 && n <= 57)
-		return (1);
-	else
-		return (0);
+    if (c >= '0' && c <= '9')
+        return (1);
+    else
+        return (0);
 }
 
 int	ft_strlen(const char *str)

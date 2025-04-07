@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jozefpluta <jozefpluta@student.42.fr>      +#+  +:+       +#+        */
+/*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/06 19:25:18 by jozefpluta       ###   ########.fr       */
+/*   Updated: 2025/04/07 18:52:12 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+struct timeval start_time, end_time;
+
 int main(int argc, char **argv)
 {
     t_table table;
-
 	// table = NULL;
     edge_cases(argc, argv);
     alloc_init_table(&table, argv);
@@ -53,12 +54,12 @@ void	threads_create_f(t_table *table)
 	head = table->philo;
 	while (head)
 	{
-		pthread_create(head->thread, NULL, dining_philosophers, head);
+		pthread_create(&head->thread, NULL, dining_philosophers, (void *)head);
 		head = head->next;
 	}
 }
 
-void	dining_philosophers(void *arg)
+void	*dining_philosophers(void *arg)
 {
 	t_philo *philo;
 	
@@ -70,18 +71,20 @@ void	dining_philosophers(void *arg)
 		if ((philo->id % 2) == 0)
 		{
 			if (pthread_mutex_lock(&philo->left_fork) == 0)
+			{
 				pthread_mutex_lock(&philo->right_fork);
-			printf("%ld %d has taken a fork\n", start_timer(1), philo->id);
-			printf("%ld %d is eating\n", start_timer(1), philo->id);
-			usleep(philo->table->time_to_eat);
-			philo->times_eaten += 1;
-			philo->last_meal_time = start_timer(1); // posefit toto
-			pthread_mutex_unlock(&philo->left_fork);
-			pthread_mutex_unlock(&philo->right_fork);
-			printf("%ld %d is sleeping\n", start_timer(1), philo->id);
-			usleep(philo->table->time_to_sleep);
-			printf("%ld %d is thinking\n", start_timer(1), philo->id);
-			usleep(philo->table->time_to_eat - philo->table->time_to_sleep);
+				printf("%ld %d has taken a fork\n", start_timer(1), philo->id);
+				printf("%ld %d is eating\n", start_timer(1), philo->id);
+				usleep(philo->table->time_to_eat);
+				philo->times_eaten += 1;
+				philo->last_meal_time = start_timer(1); // posefit toto
+				pthread_mutex_unlock(&philo->left_fork);
+				pthread_mutex_unlock(&philo->right_fork);
+				printf("%ld %d is sleeping\n", start_timer(1), philo->id);
+				usleep(philo->table->time_to_sleep);
+				printf("%ld %d is thinking\n", start_timer(1), philo->id);
+				usleep(philo->table->time_to_eat - philo->table->time_to_sleep);
+			}
 		}
 		else
 		{
@@ -180,7 +183,7 @@ void    alloc_init_table(t_table *table, char **argv)
     table = (t_table *)malloc(sizeof(t_table));
     if (!table)
         exit(1);
-    table->num_of_philo = atoi(argv[1]);
+    table->num_of_philo = ft_atoi(argv[1]);
 	table->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * table->num_of_philo);
     if (!table->forks)
 		exit(1);
@@ -189,10 +192,10 @@ void    alloc_init_table(t_table *table, char **argv)
 		pthread_mutex_init(&table->forks[i], NULL);
 		i++;
 	}
-	table->time_to_die = atoi(argv[2]);
-    table->time_to_eat = atoi(argv[3]);
-    table->time_to_sleep = atoi(argv[4]);
-    table->number_of_times_each_phil_must_eat = atoi(argv[5]);
+	table->time_to_die = ft_atoi(argv[2]);
+    table->time_to_eat = ft_atoi(argv[3]);
+    table->time_to_sleep = ft_atoi(argv[4]);
+    table->number_of_times_each_phil_must_eat = ft_atoi(argv[5]);
 	table->philo = NULL;
 }
 
@@ -215,7 +218,7 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 	{
 		new_philo = (t_philo *)malloc(sizeof(t_philo));
 		if (!new_philo)
-			error_msg();
+			error_msg_1();
 		head = new_philo;
 		new_philo->id = n;
 		new_philo->last_meal_time = 0;
@@ -229,14 +232,14 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 	{
 		new_philo = (t_philo *)malloc(sizeof(t_philo));
 		if (!new_philo)
-			error_msg();
+			error_msg_2();
 		new_philo->id = n;
 		new_philo->last_meal_time = 0;
 		new_philo->times_eaten = 0;
 		new_philo->table = table;
-		table->philo->next = new_philo;
-		table->philo = table->philo->next;
-		table->philo->next = NULL;
+		new_philo->next = NULL;
+        table->philo->next = new_philo;
+        table->philo = new_philo;
 		n++;
 	}
 	table->philo = head;
@@ -247,26 +250,22 @@ void    edge_cases(int argc, char **argv)
     int num_of_philo;
 	int	i;
 
-	i = 2;
-    if (argc != 6)
+    if (argc < 5 || argc > 6)
     {
         printf("Error [Wrong number of arguments]\n");
         exit(0);
     }
-	if (!is_num(argv[1]))
-		ft_error2();
+	i = 1;
+	while (i < argc)
+	{
+		if (!is_num(argv[i]))
+			ft_error2();
+		i++;
+	}
     num_of_philo = ft_atoi(argv[1]);
     if (num_of_philo < 1)
     {
         printf("Error [Wrong number of philosophers]\n");
         exit(0);
     }
-	while (i <= 5)
-	{
-		if (0 > ft_atoi(argv[i]))
-			ft_error2();
-		if (!(is_num(argv[i])))
-			error_msg();
-		i++;
-	}
 }

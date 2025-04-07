@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/06 17:14:39 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/07 18:28:16 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@
 
 /*  structs  */
 
+extern struct timeval start_time, end_time;
 typedef struct s_philo t_philo;
 typedef struct s_table t_table;
-struct	timeval start_time;
-struct	timeval end_time;
 
 typedef struct s_philo
 {
@@ -54,13 +53,16 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n);
 void    edge_cases(int argc, char **argv);
 void	init_monitoring(t_table *table);
 void	*monitoring_f(void *arg);
-void	dining_philosophers(void *arg);
+void	join_forks(t_table *table);
+void	*dining_philosophers(void *arg);
 int		have_all_eaten(t_table *table);
 long 	start_timer(int i);
 void	threads_create_f(t_table *table);
 
 /*  error.c functions  */
-void    error_msg();
+void    error_msg_1();
+void    error_msg_2();
+void    error_msg_3();
 void	ft_error2();
 
 /*  utils.c functions  */
