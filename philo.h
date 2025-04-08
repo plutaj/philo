@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/07 18:28:16 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/08 18:43:08 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,15 @@ typedef struct s_table
     unsigned int    	time_to_eat;
     unsigned int    	time_to_sleep;
     unsigned int    	number_of_times_each_phil_must_eat;
-	pthread_t			*monitoring;
+	pthread_t			monitoring;
 	pthread_mutex_t		*forks;
 	t_philo 			*philo;
 }               t_table;
 
 /*  philo.c functions  */
 void    alloc_init_table(t_table *table, char **argv);
-void    create_philos(t_table *table);
-void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n);
+// void    create_philos(t_table *table);
+void	alloc_philos(t_table *table);
 void    edge_cases(int argc, char **argv);
 void	init_monitoring(t_table *table);
 void	*monitoring_f(void *arg);

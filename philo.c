@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/07 18:52:12 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/08 18:45:08 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,18 @@ struct timeval start_time, end_time;
 
 int main(int argc, char **argv)
 {
-    t_table table;
-	// table = NULL;
+    t_table *table;
+	
+	table = (t_table *)malloc(sizeof(t_table));
+    if (!table)
+        exit(1);
     edge_cases(argc, argv);
-    alloc_init_table(&table, argv);
-    create_philos(&table);
-	join_forks(&table);
-	init_monitoring(&table);
+    alloc_init_table(table, argv);
+    alloc_philos(table);
+	join_forks(table);
+	init_monitoring(table);
 	usleep(1000); // waiting till all phillos created
-	threads_create_f(&table);
+	threads_create_f(table);
     return (0);
 }
 
@@ -57,6 +60,13 @@ void	threads_create_f(t_table *table)
 		pthread_create(&head->thread, NULL, dining_philosophers, (void *)head);
 		head = head->next;
 	}
+	head = table->philo;
+	while (head)
+	{
+		pthread_join(head->thread, NULL);
+		head = head->next;
+	}
+	pthread_join(table->monitoring, NULL);
 }
 
 void	*dining_philosophers(void *arg)
@@ -120,10 +130,7 @@ void	join_forks(t_table *table)
 
 void	init_monitoring(t_table *table)
 {
-    pthread_t	monitoring;
-	
-	table->monitoring = &monitoring;
-	pthread_create(&monitoring, NULL, monitoring_f, (void *)table); // add 3rd param
+	pthread_create(&table->monitoring, NULL, monitoring_f, (void *)table); // add 3rd param
 }
 
 void	*monitoring_f(void *arg)
@@ -180,9 +187,9 @@ void    alloc_init_table(t_table *table, char **argv)
 	int	i;
 
 	i = 0;
-    table = (t_table *)malloc(sizeof(t_table));
-    if (!table)
-        exit(1);
+    // table = (t_table *)malloc(sizeof(t_table));
+    // if (!table)
+    //     exit(1);
     table->num_of_philo = ft_atoi(argv[1]);
 	table->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * table->num_of_philo);
     if (!table->forks)
@@ -199,35 +206,37 @@ void    alloc_init_table(t_table *table, char **argv)
 	table->philo = NULL;
 }
 
-void    create_philos(t_table *table)
-{
-    int n;
+// void    create_philos(t_table *table)
+// {
+//     int n;
 
-    n = 0;
+//     n = 0;
+// 	t_philo new_philo;
+// 	t_philo	head;
+
+// 	alloc_philos(table, &new_philo, &head, &n);
+// }
+
+void	alloc_philos(t_table *table)
+{
+	int n;
 	t_philo *new_philo;
 	t_philo	*head;
-
-	new_philo = NULL;
-	head = NULL;
-	alloc_philos(table, new_philo, head, n);
-}
-
-void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
-{
-	if (table->philo == NULL && table->num_of_philo > 0)
-	{
-		new_philo = (t_philo *)malloc(sizeof(t_philo));
-		if (!new_philo)
-			error_msg_1();
-		head = new_philo;
-		new_philo->id = n;
-		new_philo->last_meal_time = 0;
-		new_philo->times_eaten = 0;
-		new_philo->next = NULL;
-		new_philo->table = table;
-		table->philo = new_philo;
-		n++;
-	}
+	t_philo *current;
+	
+    n = 0;
+	new_philo = (t_philo *)malloc(sizeof(t_philo));
+	if (!new_philo)
+		error_msg_1();
+	head = new_philo;
+	
+	new_philo->id = n;
+	new_philo->last_meal_time = 0;
+	new_philo->times_eaten = 0;
+	new_philo->next = NULL;
+	new_philo->table = table;
+	table->philo = new_philo;
+	n++;
 	while(n < table->num_of_philo)
 	{
 		new_philo = (t_philo *)malloc(sizeof(t_philo));
@@ -236,10 +245,12 @@ void	alloc_philos(t_table *table, t_philo *new_philo, t_philo *head, int n)
 		new_philo->id = n;
 		new_philo->last_meal_time = 0;
 		new_philo->times_eaten = 0;
-		new_philo->table = table;
 		new_philo->next = NULL;
-        table->philo->next = new_philo;
-        table->philo = new_philo;
+		new_philo->table = table;
+		current = table->philo;
+        while (current->next != NULL)
+			current = current->next;
+		current->next = new_philo;
 		n++;
 	}
 	table->philo = head;
