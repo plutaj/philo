@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/08 18:43:08 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/10 17:37:36 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 
 /*  structs  */
 
-extern struct timeval start_time, end_time;
 typedef struct s_philo t_philo;
 typedef struct s_table t_table;
 
