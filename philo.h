@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/10 17:37:36 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/11 21:02:40 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_philo
     unsigned int    id;
     pthread_t       thread;
 	unsigned int	times_eaten;
+	pthread_mutex_t last_meal_time_mutex; // added 1
 	unsigned int	last_meal_time;
 	pthread_mutex_t	left_fork;
 	pthread_mutex_t	right_fork;
@@ -39,7 +40,7 @@ typedef struct s_table
     unsigned int    	time_to_die;
     unsigned int    	time_to_eat;
     unsigned int    	time_to_sleep;
-    unsigned int    	number_of_times_each_phil_must_eat;
+    int					number_of_times_each_phil_must_eat; //changed from unsigned to int
 	pthread_t			monitoring;
 	pthread_mutex_t		*forks;
 	t_philo 			*philo;
@@ -47,9 +48,8 @@ typedef struct s_table
 
 /*  philo.c functions  */
 void    alloc_init_table(t_table *table, char **argv);
-// void    create_philos(t_table *table);
 void	alloc_philos(t_table *table);
-void    edge_cases(int argc, char **argv);
+void    edge_cases(int argc, char **argv, t_table *table);
 void	init_monitoring(t_table *table);
 void	*monitoring_f(void *arg);
 void	join_forks(t_table *table);

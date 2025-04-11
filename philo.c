@@ -6,11 +6,13 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/10 18:46:56 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/11 21:05:52 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+// Poznamka : chyba niekde v monitoring_f v if statemente
 
 int main(int argc, char **argv)
 {
@@ -19,12 +21,12 @@ int main(int argc, char **argv)
 	table = (t_table *)malloc(sizeof(t_table));
     if (!table)
         exit(1);
-    edge_cases(argc, argv);
+    edge_cases(argc, argv, table);
     alloc_init_table(table, argv);
     alloc_philos(table);
 	join_forks(table);
 	init_monitoring(table);
-	usleep(1000); // waiting till all phillos created
+	usleep(1000);
 	threads_create_f(table);
     return (0);
 }
@@ -162,15 +164,23 @@ void	*monitoring_f(void *arg)
 	t_table	*table = (t_table *)arg;
 
 	head = table->philo;
+	while (head)
+	{
+		pthread_mutex_init(&head->last_meal_time_mutex, NULL); // added 1
+		head = head->next;
+	}
+	head = table->philo;
 	while (1)
 	{
 		while (head)
 		{
-			if ((head->last_meal_time - start_timer(1)) > table->time_to_die)
+			pthread_mutex_lock(&head->last_meal_time_mutex); // added 1
+			if ((head->last_meal_time - start_timer(1)) > table->time_to_die) // chyba niekde tu 
 			{
 				printf("Philo number %u died of starvation\n", head->id);
 				exit(0);
 			}
+			pthread_mutex_unlock(&head->last_meal_time_mutex); // added 1
 			head = head->next;
 		}
 		head = table->philo;
@@ -188,6 +198,8 @@ int	have_all_eaten(t_table *table)
 	t_philo	*head;
 
 	head = table->philo;
+	if (table->number_of_times_each_phil_must_eat == -1) // case when argc == 5
+		return (0);
 	while (head)
 	{
 		if (head->times_eaten < table->number_of_times_each_phil_must_eat)
@@ -214,7 +226,8 @@ void    alloc_init_table(t_table *table, char **argv)
 	table->time_to_die = ft_atoi(argv[2]);
     table->time_to_eat = ft_atoi(argv[3]);
     table->time_to_sleep = ft_atoi(argv[4]);
-    table->number_of_times_each_phil_must_eat = ft_atoi(argv[5]);
+	if (table->number_of_times_each_phil_must_eat != -1) // case when argc == 5
+    	table->number_of_times_each_phil_must_eat = ft_atoi(argv[5]);
 	table->philo = NULL;
 }
 
@@ -257,7 +270,7 @@ void	alloc_philos(t_table *table)
 	table->philo = head;
 }
 
-void    edge_cases(int argc, char **argv)
+void    edge_cases(int argc, char **argv, t_table *table)
 {
     int num_of_philo;
 	int	i;
@@ -267,6 +280,8 @@ void    edge_cases(int argc, char **argv)
         printf("Error [Wrong number of arguments]\n");
         exit(0);
     }
+	if (argc == 5)
+		table->number_of_times_each_phil_must_eat = -1;
 	i = 1;
 	while (i < argc)
 	{
