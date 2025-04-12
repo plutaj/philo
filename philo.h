@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jozefpluta <jozefpluta@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/11 21:02:40 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/12 13:46:33 by jozefpluta       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,17 @@ typedef struct s_table t_table;
 
 typedef struct s_philo
 {
-	t_table 		*table;
+	t_table			*table;
     unsigned int    id;
     pthread_t       thread;
 	unsigned int	times_eaten;
 	pthread_mutex_t last_meal_time_mutex; // added 1
+	pthread_mutex_t times_eaten_mutex; // added 1
 	unsigned int	last_meal_time;
 	pthread_mutex_t	left_fork;
 	pthread_mutex_t	right_fork;
 	t_philo			*next;
-}               t_philo;
+}						t_philo;
 
 typedef struct s_table
 {
@@ -56,6 +57,7 @@ void	join_forks(t_table *table);
 void	*dining_philosophers(void *arg);
 int		have_all_eaten(t_table *table);
 long 	start_timer(int i);
+void	init_support_mutexes(t_philo *philo);
 void	threads_create_f(t_table *table);
 
 /*  error.c functions  */
@@ -63,6 +65,7 @@ void    error_msg_1();
 void    error_msg_2();
 void    error_msg_3();
 void	ft_error2();
+void	one_philo_case(char **argv);
 
 /*  utils.c functions  */
 int     ft_atoi(const char *str);
