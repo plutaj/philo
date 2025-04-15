@@ -6,12 +6,12 @@
 #    By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/02 17:56:03 by jpluta            #+#    #+#              #
-#    Updated: 2025/04/04 18:11:59 by jpluta           ###   ########.fr        #
+#    Updated: 2025/04/15 19:33:00 by jpluta           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
-CFLAGS = -Wall -g
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
 
 SRC = philo.c utils.c error.c itoa.c
 OBJ = $(SRC:.c=.o)

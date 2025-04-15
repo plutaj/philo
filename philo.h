@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/14 19:03:19 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/15 19:38:28 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ typedef struct s_table t_table;
 typedef struct s_philo
 {
 	t_table			*table;
-    unsigned int    id;
+    int    			id;
     pthread_t       thread;
-	unsigned int	times_eaten;
+	int				times_eaten;
 	pthread_mutex_t last_meal_time_mutex;
 	pthread_mutex_t times_eaten_mutex;
 	unsigned int	last_meal_time;
@@ -37,7 +37,7 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-    unsigned int    	num_of_philo;
+    int    	num_of_philo;
     unsigned int    	time_to_die;
     unsigned int    	time_to_eat;
     unsigned int    	time_to_sleep;
@@ -66,6 +66,8 @@ int		check_stop(t_table *table);
 void	cleanup(t_table *table);
 void	odd_philo(t_philo *philo);
 void	even_philo(t_philo *philo);
+void	print_sleeping(t_philo *philo);
+void	print_thinking(t_philo *philo);
 
 /*  error.c functions  */
 

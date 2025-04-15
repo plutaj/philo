@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:16 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/14 19:01:36 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/15 19:38:53 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,13 @@ void	*dining_philosophers(void *arg)
 
 void	odd_philo(t_philo *philo)
 {
-	printf("%ld %d is sleeping\n", start_timer(1), philo->id);
-	usleep(philo->table->time_to_sleep * 1000);
-	printf("%ld %d is thinking\n", start_timer(1), philo->id);
-	usleep((philo->table->time_to_eat - philo->table->time_to_sleep) * 1000);
-	if (pthread_mutex_lock(&philo->right_fork) == 0)
+	if (check_stop(philo->table))
+		return ;
+	if(!check_stop(philo->table))
+		print_sleeping(philo);
+	if(!check_stop(philo->table))
+		print_thinking(philo);
+	if (pthread_mutex_lock(&philo->right_fork) == 0 && !check_stop(philo->table))
 	{
 		pthread_mutex_lock(&philo->left_fork);
 		printf("%ld %d has taken a fork\n", start_timer(1), philo->id);
@@ -144,9 +146,29 @@ void	odd_philo(t_philo *philo)
 	}
 }
 
+void print_thinking(t_philo *philo)
+{
+	if(!check_stop(philo->table))
+	{
+		printf("%ld %d is thinking\n", start_timer(1), philo->id);
+		usleep((philo->table->time_to_eat - philo->table->time_to_sleep) * 1000);
+	}
+}
+
+void print_sleeping(t_philo *philo)
+{
+	if(!check_stop(philo->table))
+	{
+		printf("%ld %d is sleeping\n", start_timer(1), philo->id);
+		usleep(philo->table->time_to_sleep * 1000);
+	}
+}
+
 void	even_philo(t_philo *philo)
 {
-	if (pthread_mutex_lock(&philo->left_fork) == 0)
+	if(check_stop(philo->table))
+		return;
+	if (pthread_mutex_lock(&philo->left_fork) == 0 && !check_stop(philo->table))
 	{
 		pthread_mutex_lock(&philo->right_fork);
 		printf("%ld %d has taken a fork\n", start_timer(1), philo->id);
@@ -158,17 +180,17 @@ void	even_philo(t_philo *philo)
 		philo->last_meal_time = start_timer(1);
 		pthread_mutex_unlock(&philo->left_fork);
 		pthread_mutex_unlock(&philo->right_fork);
-		printf("%ld %d is sleeping\n", start_timer(1), philo->id);
-		usleep(philo->table->time_to_sleep * 1000);
-		printf("%ld %d is thinking\n", start_timer(1), philo->id);
-		usleep((philo->table->time_to_eat - philo->table->time_to_sleep) * 1000);
+		if(!check_stop(philo->table))
+			print_sleeping(philo);
+		if(!check_stop(philo->table))
+			print_thinking(philo);
 	}
 }
 
 void	join_forks(t_table *table)
 {
 	int	i;
-	t_philo	*current;
+	t_philo			*current;
 
 	i = 0;
 	current = table->philo;
