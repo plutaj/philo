@@ -6,7 +6,7 @@
 /*   By: jpluta <jpluta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:06:19 by jozefpluta        #+#    #+#             */
-/*   Updated: 2025/04/15 19:38:28 by jpluta           ###   ########.fr       */
+/*   Updated: 2025/04/16 18:45:28 by jpluta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_philo
 	int				times_eaten;
 	pthread_mutex_t last_meal_time_mutex;
 	pthread_mutex_t times_eaten_mutex;
+	pthread_mutex_t	stop_mutex;
 	unsigned int	last_meal_time;
 	pthread_mutex_t	left_fork;
 	pthread_mutex_t	right_fork;
@@ -37,14 +38,15 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-    int    	num_of_philo;
+    int    				num_of_philo;
     unsigned int    	time_to_die;
     unsigned int    	time_to_eat;
     unsigned int    	time_to_sleep;
     int					number_of_times_each_phil_must_eat;
 	pthread_t			monitoring;
+	pthread_mutex_t 	print_mutex;
 	int					stop;
-	pthread_mutex_t		stop_mutex;		
+	pthread_mutex_t		stop_mutex;
 	pthread_mutex_t		*forks;
 	t_philo 			*philo;
 }               			t_table;
@@ -68,6 +70,7 @@ void	odd_philo(t_philo *philo);
 void	even_philo(t_philo *philo);
 void	print_sleeping(t_philo *philo);
 void	print_thinking(t_philo *philo);
+void	print_taken_fork_eating(t_philo *philo);
 
 /*  error.c functions  */
 
